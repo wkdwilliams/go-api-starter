@@ -16,7 +16,7 @@ import (
 type Server struct {
 	listenAddr 	string
 	Echo 		*echo.Echo
-	db 			storage.Storage
+	db  		storage.Storage
 	validator 	*validator.Validate
 }
 
@@ -24,7 +24,7 @@ func New(listenAddr string) *Server {
 	return &Server{
 		listenAddr:	listenAddr,
 		Echo:		echo.New(),
-		db:			storage.NewSqlStorage(),
+		db:  		storage.NewSqlStorage(),
 		validator:	validator.New(validator.WithRequiredStructEnabled()),
 	}
 }
