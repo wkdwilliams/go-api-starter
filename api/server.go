@@ -22,10 +22,10 @@ type Server struct {
 
 func New(listenAddr string) *Server {
 	return &Server{
-		listenAddr: listenAddr,
-		Echo: 		echo.New(),
-		db: 		storage.NewSqlStorage(),
-		validator: 	validator.New(validator.WithRequiredStructEnabled()),
+		listenAddr:	listenAddr,
+		Echo:		echo.New(),
+		db:			storage.NewSqlStorage(),
+		validator:	validator.New(validator.WithRequiredStructEnabled()),
 	}
 }
 
