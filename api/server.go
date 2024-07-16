@@ -8,24 +8,25 @@ import (
 	"log"
 	"net/http"
 	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
 type Server struct {
-	listenAddr 	string
-	Echo 		*echo.Echo
-	db  		storage.Storage
-	validator 	*validator.Validate
+	listenAddr string
+	Echo       *echo.Echo
+	db         storage.Storage
+	validator  *validator.Validate
 }
 
 func New(listenAddr string) *Server {
 	return &Server{
-		listenAddr:	listenAddr,
-		Echo:		echo.New(),
-		db:  		storage.NewSqlStorage(),
-		validator:	validator.New(validator.WithRequiredStructEnabled()),
+		listenAddr: listenAddr,
+		Echo:       echo.New(),
+		db:         storage.NewSqlStorage(),
+		validator:  validator.New(validator.WithRequiredStructEnabled()),
 	}
 }
 
@@ -50,8 +51,8 @@ func NewNotFoundError() *echo.HTTPError {
 }
 
 type ValidationError struct {
-	Message string 		`json:"message"`
-	Error 	[]string 	`json:"error"`
+	Message string   `json:"message"`
+	Error   []string `json:"error"`
 }
 
 func customHTTPErrorHandler(err error, c echo.Context) {
@@ -71,7 +72,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 			}
 			c.JSON(http.StatusBadRequest, ValidationError{
 				Message: "Validation error",
-				Error: errors,
+				Error:   errors,
 			})
 			return
 		}

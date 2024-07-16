@@ -3,11 +3,12 @@ package api
 import (
 	"go-api-starter/types"
 	"net/http"
+
 	"github.com/labstack/echo/v4"
 )
 
 type getUserDTO struct {
-    Id string `param:"id"`
+	Id string `param:"id"`
 }
 
 func (s Server) getUserHandler(c echo.Context) error {
@@ -31,8 +32,8 @@ func (s Server) getUsersHandler(c echo.Context) error {
 }
 
 type createUserDTO struct {
-	Firstname 	string 	`json:"firstname" validate:"required"`
-	Lastname  	string 	`json:"lastname" validate:"required"`
+	Firstname string `json:"firstname" validate:"required"`
+	Lastname  string `json:"lastname" validate:"required"`
 }
 
 func (s Server) createUserHandler(c echo.Context) error {
@@ -47,8 +48,8 @@ func (s Server) createUserHandler(c echo.Context) error {
 	}
 
 	userType := types.User{
-		Firstname: 	userDTO.Firstname,
-		Lastname: 	userDTO.Lastname,
+		Firstname: userDTO.Firstname,
+		Lastname:  userDTO.Lastname,
 	}
 
 	if err := s.db.CreateUser(&userType); err != nil {
