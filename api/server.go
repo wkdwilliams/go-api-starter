@@ -50,8 +50,8 @@ func NewNotFoundError() *echo.HTTPError {
 }
 
 type ValidationError struct {
-	Message string `json:"message"`
-	Error 	[]string `json:"error"`
+	Message string 		`json:"message"`
+	Error 	[]string 	`json:"error"`
 }
 
 func customHTTPErrorHandler(err error, c echo.Context) {
