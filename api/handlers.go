@@ -3,7 +3,6 @@ package api
 import (
 	"go-api-starter/types"
 	"net/http"
-
 	"github.com/labstack/echo/v4"
 )
 

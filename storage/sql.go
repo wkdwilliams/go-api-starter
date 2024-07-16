@@ -4,6 +4,7 @@ import (
 	"go-api-starter/pkg"
 	"go-api-starter/types"
 	"math"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -16,7 +17,7 @@ func NewSqlStorage() *SqlStorage {
 	db, err := gorm.Open(sqlite.Open("sqlite.db"), &gorm.Config{})
 
 	if err != nil {
-	  panic("failed to connect database")
+		panic("failed to connect database")
 	}
 
 	return &SqlStorage{
@@ -29,14 +30,14 @@ func (s *SqlStorage) GetDB() *gorm.DB {
 }
 
 func (s *SqlStorage) Paginate(value any, pagination *pkg.Pagination, db *gorm.DB) func(db *gorm.DB) *gorm.DB {
-    var totalRows int64
-    db.Model(value).Count(&totalRows)
+	var totalRows int64
+	db.Model(value).Count(&totalRows)
 
-	pagination.TotalRows 	= totalRows
-	pagination.TotalPages 	= int(math.Ceil(float64(totalRows) / float64(pagination.GetLimit())))
+	pagination.TotalRows = totalRows
+	pagination.TotalPages = int(math.Ceil(float64(totalRows) / float64(pagination.GetLimit())))
 
-    return func(db *gorm.DB) *gorm.DB {
-    	return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort())   
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit()).Order(pagination.GetSort())
 	}
 }
 
@@ -59,7 +60,7 @@ func (s *SqlStorage) GetAllUsers() (*pkg.Pagination, error) {
 	}
 
 	pagination.Items = users
-	
+
 	return &pagination, nil
 }
 

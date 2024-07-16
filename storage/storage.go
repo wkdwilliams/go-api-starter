@@ -6,7 +6,7 @@ import (
 )
 
 type Storage interface {
-	GetUserById(int) 		(*types.User, error)
-	GetAllUsers() 	 		(*pkg.Pagination, error)
+	GetUserById(int) (*types.User, error)
+	GetAllUsers() (*pkg.Pagination, error)
 	CreateUser(*types.User) error
 }

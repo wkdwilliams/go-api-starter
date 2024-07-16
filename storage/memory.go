@@ -2,7 +2,7 @@ package storage
 
 import "go-api-starter/types"
 
-type MemoryStorage struct {}
+type MemoryStorage struct{}
 
 func NewMemoryStorage() *MemoryStorage {
 	return &MemoryStorage{}
@@ -11,7 +11,7 @@ func NewMemoryStorage() *MemoryStorage {
 func (s *MemoryStorage) GetUserById(id int) (types.User, error) {
 	user := types.User{
 		Firstname: "Lewis",
-		Lastname: "Williams",
+		Lastname:  "Williams",
 	}
 
 	return user, nil
