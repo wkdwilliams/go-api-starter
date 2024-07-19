@@ -4,6 +4,7 @@ import (
 	"go-api-starter/pkg"
 	"go-api-starter/types"
 	"math"
+	"os"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -14,7 +15,14 @@ type SqlStorage struct {
 }
 
 func NewSqlStorage() *SqlStorage {
-	db, err := gorm.Open(sqlite.Open("sqlite.db"), &gorm.Config{})
+	path := "sqlite.db"
+	_, err := os.Open("sqlite.db")
+
+	if err != nil {
+		path = "../sqlite.db"
+	}
+
+	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect database")

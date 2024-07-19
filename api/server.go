@@ -3,10 +3,10 @@ package api
 import (
 	"context"
 	"errors"
-	"fmt"
-	"go-api-starter/storage"
+	"go-api-starter/service"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -14,32 +14,41 @@ import (
 	"gorm.io/gorm"
 )
 
-type Server struct {
-	listenAddr string
-	Echo       *echo.Echo
-	db         storage.Storage
-	validator  *validator.Validate
+type customValidator struct {
+	validator validator.Validate
 }
 
-func New(listenAddr string) *Server {
-	return &Server{
+func (cv customValidator) Validate(i interface{}) error {
+	return cv.validator.Struct(i)
+}
+
+type ApiServer struct {
+	listenAddr string
+	Echo       *echo.Echo
+	service 	service.Service
+}
+
+func New(listenAddr string) *ApiServer {
+	return &ApiServer{
 		listenAddr: listenAddr,
 		Echo:       echo.New(),
-		db:         storage.NewSqlStorage(),
-		validator:  validator.New(validator.WithRequiredStructEnabled()),
+		service:	service.NewService(),
 	}
 }
 
-func (s Server) Start() error {
+func (s ApiServer) Start() error {
 	s.Echo.HTTPErrorHandler = customHTTPErrorHandler
-	s.Echo.GET("/:id", s.getUserHandler)
-	s.Echo.GET("/", s.getUsersHandler)
-	s.Echo.POST("/", s.createUserHandler)
+	s.Echo.Validator = &customValidator{
+		validator: *validator.New(validator.WithRequiredStructEnabled()),
+	}
+
+	// Register the routes in routes.go
+	s.registerRoutes(s.Echo)
 
 	return s.Echo.Start(s.listenAddr)
 }
 
-func (s Server) Stop() error {
+func (s ApiServer) Stop() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -47,7 +56,7 @@ func (s Server) Stop() error {
 }
 
 func NewNotFoundError() *echo.HTTPError {
-	return &echo.HTTPError{Code: 404, Message: http.StatusText(404)}
+	return &echo.HTTPError{Code: http.StatusNotFound, Message: http.StatusText(http.StatusNotFound)}
 }
 
 type ValidationError struct {
@@ -68,7 +77,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		} else if _, ok := err.(validator.ValidationErrors); ok {
 			var errors []string
 			for _, err := range err.(validator.ValidationErrors) {
-				errors = append(errors, fmt.Sprintf("Field %s must be %s", err.Field(), err.Tag()))
+				errors = append(errors, strings.Split(err.Error(), "Error:")[1])
 			}
 			c.JSON(http.StatusBadRequest, ValidationError{
 				Message: "Validation error",
