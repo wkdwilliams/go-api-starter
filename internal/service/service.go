@@ -2,8 +2,8 @@ package service
 
 import (
 	"go-api-starter/pkg"
-	"go-api-starter/storage"
-	"go-api-starter/types"
+	"go-api-starter/internal/storage"
+	"go-api-starter/internal/types"
 )
 
 type Service struct {
@@ -18,6 +18,10 @@ func NewService() Service {
 
 func (s Service) GetUserById(id int) (*types.User, error) {
 	return s.db.GetUserById(id)
+}
+
+func (s Service) GetUserByUsername(username string) (*types.User, error) {
+	return s.db.GetUserByUsername(username)
 }
 
 func (s Service) GetAllUsers() (*pkg.Pagination, error) {

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-api-starter/storage"
-	"go-api-starter/types"
+	"go-api-starter/internal/storage"
+	"go-api-starter/internal/types"
 )
 
 func main(){

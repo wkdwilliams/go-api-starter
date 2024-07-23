@@ -2,7 +2,7 @@ package storage
 
 import (
 	"go-api-starter/pkg"
-	"go-api-starter/types"
+	"go-api-starter/internal/types"
 	"math"
 	"os"
 
@@ -53,6 +53,16 @@ func (s *SqlStorage) GetUserById(id int) (*types.User, error) {
 	var user types.User
 
 	if err := s.db.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (s *SqlStorage) GetUserByUsername(username string) (*types.User, error) {
+	var user types.User
+
+	if err := s.db.Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
 

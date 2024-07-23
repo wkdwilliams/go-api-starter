@@ -1,7 +1,7 @@
 package api
 
 import (
-	"go-api-starter/types"
+	"go-api-starter/internal/types"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -45,8 +45,10 @@ func (s ApiServer) createUserHandler(c echo.Context) error {
 	}
 
 	userType := types.User{
-		Firstname: userDTO.Firstname,
-		Lastname:  userDTO.Lastname,
+		Firstname: 	userDTO.Firstname,
+		Lastname:  	userDTO.Lastname,
+		Username: 	userDTO.Username,
+		Password: 	userDTO.Password,
 	}
 
 	if err := s.service.CreateUser(&userType); err != nil {

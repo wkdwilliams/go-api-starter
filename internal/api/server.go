@@ -3,7 +3,8 @@ package api
 import (
 	"context"
 	"errors"
-	"go-api-starter/service"
+	"go-api-starter/internal/auth"
+	"go-api-starter/internal/service"
 	"log"
 	"net/http"
 	"strings"
@@ -25,14 +26,16 @@ func (cv customValidator) Validate(i interface{}) error {
 type ApiServer struct {
 	listenAddr string
 	Echo       *echo.Echo
-	service 	service.Service
+	service    service.Service
+	auth       auth.Auth
 }
 
 func New(listenAddr string) *ApiServer {
 	return &ApiServer{
 		listenAddr: listenAddr,
 		Echo:       echo.New(),
-		service:	service.NewService(),
+		service:    service.NewService(),
+		auth:       auth.NewJWT(),
 	}
 }
 
@@ -68,23 +71,20 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	if he, ok := err.(*echo.HTTPError); ok {
 		c.JSON(he.Code, he)
 		return
-	} else {
-		// Here we define our custom errors
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			// Handle record not found error...
-			c.JSON(http.StatusNotFound, echo.ErrNotFound)
-			return
-		} else if _, ok := err.(validator.ValidationErrors); ok {
-			var errors []string
-			for _, err := range err.(validator.ValidationErrors) {
-				errors = append(errors, strings.Split(err.Error(), "Error:")[1])
-			}
-			c.JSON(http.StatusBadRequest, ValidationError{
-				Message: "Validation error",
-				Error:   errors,
-			})
-			return
+	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		// Handle record not found error...
+		c.JSON(http.StatusNotFound, echo.ErrNotFound)
+		return
+	} else if _, ok := err.(validator.ValidationErrors); ok {
+		var errors []string
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, strings.Split(err.Error(), "Error:")[1])
 		}
+		c.JSON(http.StatusBadRequest, ValidationError{
+			Message: "Validation error",
+			Error:   errors,
+		})
+		return
 	}
 
 	// Default error is 500 - internal server error

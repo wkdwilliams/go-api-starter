@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"go-api-starter/api"
+	"go-api-starter/internal/api"
 	"log"
 	"os"
 	"os/signal"

@@ -1,6 +1,6 @@
 package storage
 
-import "go-api-starter/types"
+import "go-api-starter/internal/types"
 
 type MemoryStorage struct{}
 

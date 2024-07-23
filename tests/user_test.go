@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"go-api-starter/types"
+	"go-api-starter/internal/types"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
