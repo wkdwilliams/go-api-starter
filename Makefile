@@ -1,8 +1,10 @@
 run:
-	@nodemon --watch './**/*.go' --signal SIGTERM --exec 'clear && go' run cmd/server/server.go
+	@nodemon --watch './**/*.go' --signal SIGTERM --exec 'clear && go' run cmd/server/main.go
 build:
-	@go build -o bin/out cmd/server/server.go
+	@go build -o bin/out cmd/server/main.go
 migrate-sql:
-	@go run cmd/migrate/migrate_sql.go
+	@go run cmd/migrate/main.go
+swagger:
+	@swag init --parseDependency --parseInternal -d cmd/server/,internal/api --output docs/
 test:
-	@go test ./tests
+	@go test internal/service/* 

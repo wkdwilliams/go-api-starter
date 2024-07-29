@@ -5,27 +5,19 @@ import (
 	"errors"
 	"go-api-starter/internal/auth"
 	"go-api-starter/internal/service"
-	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
-type customValidator struct {
-	validator validator.Validate
-}
-
-func (cv customValidator) Validate(i interface{}) error {
-	return cv.validator.Struct(i)
-}
-
 type ApiServer struct {
 	listenAddr string
-	Echo       *echo.Echo
+	echo       *echo.Echo
 	service    service.Service
 	auth       auth.Auth
 }
@@ -33,38 +25,52 @@ type ApiServer struct {
 func New(listenAddr string) *ApiServer {
 	return &ApiServer{
 		listenAddr: listenAddr,
-		Echo:       echo.New(),
-		service:    service.NewService(),
+		echo:       echo.New(),
+		service:    service.New(),
 		auth:       auth.NewJWT(),
 	}
 }
 
 func (s ApiServer) Start() error {
-	s.Echo.HTTPErrorHandler = customHTTPErrorHandler
-	s.Echo.Validator = &customValidator{
+	s.echo.HTTPErrorHandler = customHTTPErrorHandler
+	s.echo.Validator = &customValidator{
 		validator: *validator.New(validator.WithRequiredStructEnabled()),
 	}
 
 	// Register the routes in routes.go
-	s.registerRoutes(s.Echo)
+	s.registerRoutes()
 
-	return s.Echo.Start(s.listenAddr)
+	return s.echo.Start(s.listenAddr)
 }
 
 func (s ApiServer) Stop() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	return s.Echo.Shutdown(ctx)
+	return s.echo.Shutdown(ctx)
 }
 
-func NewNotFoundError() *echo.HTTPError {
-	return &echo.HTTPError{Code: http.StatusNotFound, Message: http.StatusText(http.StatusNotFound)}
+type ApiResponse struct {
+	Data any `json:"data"`
+}
+
+func NewApiResponse(data any) ApiResponse {
+	return ApiResponse{
+		Data: data,
+	}
 }
 
 type ValidationError struct {
 	Message string   `json:"message"`
 	Error   []string `json:"error"`
+}
+
+type customValidator struct {
+	validator validator.Validate
+}
+
+func (cv customValidator) Validate(i interface{}) error {
+	return cv.validator.Struct(i)
 }
 
 func customHTTPErrorHandler(err error, c echo.Context) {
@@ -88,6 +94,6 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	}
 
 	// Default error is 500 - internal server error
-	log.Println(err.Error())
+	log.Err(err).Msg("")
 	c.JSON(http.StatusInternalServerError, echo.ErrInternalServerError)
 }

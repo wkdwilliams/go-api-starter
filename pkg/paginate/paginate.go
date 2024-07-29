@@ -1,9 +1,9 @@
-package pkg
+package paginate
 
 type Pagination struct {
-	Limit      int    `json:"limit"`
-	Page       int    `json:"page"`
-	Sort       string `json:"sort"`
+	Limit      int    `json:"limit" query:"limit"`
+	Page       int    `json:"page" query:"page"`
+	Sort       string `json:"sort" query:"sort" example:"id desc"`
 	TotalRows  int64  `json:"total_rows"`
 	TotalPages int    `json:"total_pages"`
 	Items      any    `json:"items"`
@@ -25,6 +25,7 @@ func (p *Pagination) GetPage() int {
 	if p.Page == 0 {
 		p.Page = 1
 	}
+
 	return p.Page
 }
 
@@ -32,5 +33,6 @@ func (p *Pagination) GetSort() string {
 	if p.Sort == "" {
 		p.Sort = "id asc"
 	}
+
 	return p.Sort
 }

@@ -2,4 +2,4 @@ package tests
 
 import s "go-api-starter/internal/service"
 
-var service = s.NewService()
+var service = s.New()

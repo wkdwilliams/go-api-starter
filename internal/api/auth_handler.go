@@ -18,7 +18,7 @@ func (s ApiServer) loginHandler(c echo.Context) error {
 		return err
 	}
 
-	if err := s.Echo.Validator.Validate(authRequest); err != nil {
+	if err := s.echo.Validator.Validate(authRequest); err != nil {
 		return err
 	}
 
